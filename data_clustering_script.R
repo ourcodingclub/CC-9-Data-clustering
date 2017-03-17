@@ -1,5 +1,5 @@
-#Data clustering tutorial
-#Clustering data for Bolivia (if Ary allows it)
+# Data clustering tutorial
+# Clustering data for Bolivia
 
 #Installing packages needed for the analysis
 install.packages("recluster")
@@ -16,9 +16,9 @@ head(spp)
 dim(spp)
 
 #sites
-sites_bol <- read.csv("sites_bolivia.csv", sep=",", head=TRUE) 
-dim(sites_bol)
-head(sites_bol)
+sites <- read.csv("sites_bolivia.csv", sep=",", head=TRUE) 
+dim(sites)
+head(sites)
 
 #sppxarea matrix
 sppxsites <- read.csv("sppxsites_bol.csv", sep=",", head=TRUE)
@@ -118,11 +118,11 @@ plot(bol_upgma_trim_cons, direction = "downwards")
 #try with only 10 for now.
 
 #Full matrix
-bol_upgma_boot <- recluster.boot(bol_upgma_cons, spp_commat, tr = 100, p = 0.5, method = "average", boot = 1000, level = 1)
+bol_upgma_boot <- recluster.boot(bol_upgma_cons, spp_commat, tr = 100, p = 0.5, method = "average", boot = 10, level = 1)
 recluster.plot(bol_upgma_cons, bol_upgma_boot, direction = "downwards")
 
 #Trimmed matrix
-bol_upgma_trim_boot <- recluster.boot(bol_upgma_cons, spp_commat_trim, tr = 100, p = 0.5, method = "average", boot = 1000, level = 1)
+bol_upgma_trim_boot <- recluster.boot(bol_upgma_cons, spp_commat_trim, tr = 100, p = 0.5, method = "average", boot = 10, level = 1)
 recluster.plot(bol_upgma_cons, bol_upgma_boot, direction = "downwards")
 
 #Now, for the sake of brevity, let us work with the UPGMA cluster created with the full dataset
@@ -200,34 +200,34 @@ length(cluster_membership)
 class(cluster_membership)
 
 #matching cluster_membership with areas_lowtrop_1000m_nofrost
-cluster_membership <- cluster_membership[match(sites_bol$AreaCode,all_tips)]
+cluster_membership <- cluster_membership[match(sites$AreaCode,all_tips)]
 
 #binding cluster membership to areas_lowtrop_1000m_notemperate_norogue
-sites_bol_membership <- cbind(sites_bol, cluster_membership)
-unique(sites_bol_membership$cluster_membership)
-dim(sites_bol_membership)
-head(sites_bol_membership)
-unique(sites_bol_membership$cluster_membership)
+sites_membership <- cbind(sites, cluster_membership)
+unique(sites_membership$cluster_membership)
+dim(sites_membership)
+head(sites_membership)
+unique(sites_membership$cluster_membership)
 
 #Let's make the map now
 
 map(xlim=c(-70,-55),ylim=c(-25,-8))
 map.axes()
 #Atlantic group
-points(sites_bol_membership$Long10[which(sites_bol_membership$cluster_membership == "Group 1")]
-       ,sites_bol_membership$Lat10[which(sites_bol_membership$cluster_membership == "Group 1")],pch=24,col=rgb
+points(sites_membership$Long10[which(sites_membership$cluster_membership == "Group 1")]
+       ,sites_membership$Lat10[which(sites_membership$cluster_membership == "Group 1")],pch=24,col=rgb
        (t(col2rgb("chartreuse4"))/255,alpha=1), bg=rgb(t(col2rgb("chartreuse4"))/255))
 #Cerrado group
-points(sites_bol_membership$Long10[which(sites_bol_membership$cluster_membership == "Group 2")]
-       ,sites_bol_membership$Lat10[which(sites_bol_membership$cluster_membership == "Group 2")],pch="O",col=rgb
+points(sites_membership$Long10[which(sites_membership$cluster_membership == "Group 2")]
+       ,sites_membership$Lat10[which(sites_membership$cluster_membership == "Group 2")],pch="O",col=rgb
        (t(col2rgb("gray53"))/255,alpha=1), bg=rgb(t(col2rgb("gray53"))/255, alpha=1))
 #Amazon group
-points(sites_bol_membership$Long10[which(sites_bol_membership$cluster_membership == "Group 3")]
-       ,sites_bol_membership$Lat10[which(sites_bol_membership$cluster_membership == "Group 3")],pch=15,col=rgb
+points(sites_membership$Long10[which(sites_membership$cluster_membership == "Group 3")]
+       ,sites_membership$Lat10[which(sites_membership$cluster_membership == "Group 3")],pch=15,col=rgb
        (t(col2rgb("blue"))/255,alpha=1), bg=rgb(t(col2rgb("blue"))/255, alpha=1))
 #SDTF group
-points(sites_bol_membership$Long10[which(sites_bol_membership$cluster_membership == "Group 4")]
-       ,sites_bol_membership$Lat10[which(sites_bol_membership$cluster_membership == "Group 4")],pch=19,col=rgb
+points(sites_membership$Long10[which(sites_membership$cluster_membership == "Group 4")]
+       ,sites_membership$Lat10[which(sites_membership$cluster_membership == "Group 4")],pch=19,col=rgb
        (t(col2rgb("saddlebrown"))/255,alpha=1), bg=rgb(t(col2rgb("saddlebrown"))/255))
 
 #Very interesting results!
